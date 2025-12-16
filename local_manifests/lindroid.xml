@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+    <remote name="github-lineage" fetch="https://github.com/LineageOS" />
+    <remote name="github-muppets" fetch="https://github.com/TheMuppets" />
+    <remote name="github-lindroid" fetch="https://github.com/Linux-on-droid" />
+
+    <!-- Device Tree for Xiaomi Pad 5 (nabu) -->
+    <project name="android_device_xiaomi_nabu" path="device/xiaomi/nabu" remote="github-lineage" revision="lineage-21" />
+    <project name="android_device_xiaomi_sm8150-common" path="device/xiaomi/sm8150-common" remote="github-lineage" revision="lineage-21" />
+
+    <!-- Kernel -->
+    <project name="android_kernel_xiaomi_nabu" path="kernel/xiaomi/nabu" remote="github-lineage" revision="lineage-21" />
+
+    <!-- Vendor Blobs -->
+    <project name="proprietary_vendor_xiaomi_nabu" path="vendor/xiaomi/nabu" remote="github-muppets" revision="lineage-21" />
+    <project name="proprietary_vendor_xiaomi_sm8150-common" path="vendor/xiaomi/sm8150-common" remote="github-muppets" revision="lineage-21" />
+
+    <!-- Firmware/Hardware -->
+    <project name="android_hardware_xiaomi" path="hardware/xiaomi" remote="github-lineage" revision="lineage-21" />
+
+    <!-- Lindroid Dependencies -->
+    <project name="vendor_lindroid" path="vendor/lindroid" remote="github-lindroid" revision="main" />
+    <project name="external_lxc" path="external/lxc" remote="github-lindroid" revision="main" />
+    <project name="libhybris" path="libhybris" remote="github-lindroid" revision="main" />
+</manifest>
