@@ -1,0 +1,101 @@
+name: Build crDroid with Lindroid
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest_url:
+        description: 'Manifest URL (default: crDroid)'
+        required: true
+        default: 'https://github.com/crdroidandroid/android.git'
+      manifest_branch:
+        description: 'Manifest Branch (default: 14.0)'
+        required: true
+        default: '14.0'
+      device_codename:
+        description: 'Device Codename'
+        required: true
+        default: 'nabu'
+      build_target:
+        description: 'Build Target'
+        required: true
+        default: 'bacon'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Maximize Build Space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 2048
+          swap-size-mb: 1024
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+          remove-docker-images: 'true'
+
+      - name: Install Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential ccache curl flex g++-multilib gcc-multilib git git-lfs gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5 libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-gtk3-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev python3 python-is-python3
+
+          # Install Repo
+          mkdir -p ~/bin
+          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          chmod a+x ~/bin/repo
+          echo "$HOME/bin" >> $GITHUB_PATH
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git config --global color.ui false
+
+      - name: Initialize Repo
+        run: |
+          mkdir workspace
+          cd workspace
+          repo init -u ${{ inputs.manifest_url }} -b ${{ inputs.manifest_branch }} --git-lfs
+
+      - name: Apply Local Manifests
+        run: |
+          mkdir -p workspace/.repo/local_manifests
+          cp local_manifests/lindroid.xml workspace/.repo/local_manifests/
+          # Copy setup scripts to workspace root for later use
+          cp setup_lindroid.sh workspace/
+          cp setup_crdroid_tree.sh workspace/
+          cp lindroid_config.fragment workspace/
+          chmod +x workspace/*.sh
+
+      - name: Sync Repo
+        working-directory: ./workspace
+        run: |
+          repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
+
+      - name: Setup Lindroid Integration
+        working-directory: ./workspace
+        run: |
+          ./setup_lindroid.sh
+
+      - name: Build ROM
+        working-directory: ./workspace
+        run: |
+          . build/envsetup.sh
+          # Determine lunch target - assuming userdebug variant
+          LUNCH_TARGET="crdroid_${{ inputs.device_codename }}-userdebug"
+          echo "Lunching $LUNCH_TARGET..."
+          lunch $LUNCH_TARGET
+
+          # Build
+          mka ${{ inputs.build_target }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: crDroid-Lindroid-${{ inputs.device_codename }}
+          path: workspace/out/target/product/${{ inputs.device_codename }}/*.zip

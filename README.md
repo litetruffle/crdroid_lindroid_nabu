@@ -77,3 +77,14 @@ After flashing the ROM:
 - [Lindroid Project](https://github.com/Linux-on-droid)
 - [alghiffaryfa19](https://github.com/alghiffaryfa19) for the initial guide.
 - [AngelaCooljx](https://gist.github.com/AngelaCooljx) for the detailed guide.
+
+## GitHub Actions
+
+This repository includes a GitHub Actions workflow (`.github/workflows/build_rom.yml`) to build the ROM automatically.
+
+**Note:** Building a full Android 14 ROM requires 250GB-300GB of disk space. Standard GitHub Actions runners (even with space-saving hacks) typically offer ~85GB, which is insufficient. This workflow is provided for use with **self-hosted runners** or environments with sufficient storage.
+
+To run the workflow:
+1. Go to the "Actions" tab.
+2. Select "Build crDroid with Lindroid".
+3. Click "Run workflow".
