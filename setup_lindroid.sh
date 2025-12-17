@@ -91,12 +91,13 @@ fi
 echo -e "${GREEN}Updating Kernel Config at ${KERNEL_CONFIG}...${NC}"
 
 if [ -f "$KERNEL_CONFIG" ] && [ -f "lindroid_config.fragment" ]; then
-    # Check if the config is already applied (checking one key config)
-    if ! grep -q "CONFIG_UTS_NS=y" "$KERNEL_CONFIG"; then
+    # Check if the config is already applied (checking one specific Lindroid config, e.g. CONFIG_VETH)
+    # CONFIG_UTS_NS is common in Android, so we check for VETH which is LXC/Docker specific
+    if ! grep -q "CONFIG_VETH=y" "$KERNEL_CONFIG"; then
         cat lindroid_config.fragment >> "$KERNEL_CONFIG"
         echo -e "${GREEN}Appended Lindroid config to ${KERNEL_CONFIG}.${NC}"
     else
-         echo -e "${GREEN}Lindroid kernel config seems to be already present in ${KERNEL_CONFIG}. Skipping append.${NC}"
+         echo -e "${GREEN}Lindroid kernel config (VETH) seems to be already present in ${KERNEL_CONFIG}. Skipping append.${NC}"
     fi
 else
     echo -e "${RED}Kernel config or lindroid_config.fragment not found. Skipping kernel config update.${NC}"

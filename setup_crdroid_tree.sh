@@ -27,9 +27,9 @@ if [ -f "lineage_nabu.mk" ]; then
     echo -e "${GREEN}Adapting crdroid_nabu.mk for crDroid...${NC}"
 
     # Replace the inherit-product line
-    # From: $(call inherit-product, vendor/lineage/config/common.mk)
-    # To:   $(call inherit-product, vendor/crdroid/config/common.mk)
-    sed -i 's|vendor/lineage/config/common.mk|vendor/crdroid/config/common.mk|g' crdroid_nabu.mk
+    # LineageOS might use common.mk or common_full_tablet_wifionly.mk
+    # We replace any vendor/lineage/config/.*.mk with vendor/crdroid/config/common.mk
+    sed -i 's|vendor/lineage/config/.*\.mk|vendor/crdroid/config/common.mk|g' crdroid_nabu.mk
 
     # Replace PRODUCT_NAME
     # From: PRODUCT_NAME := lineage_nabu
