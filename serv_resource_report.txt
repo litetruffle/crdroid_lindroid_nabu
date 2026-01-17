@@ -1,0 +1,8 @@
+Synthesis Results for SERV RISC-V CPU (iCE40):
+----------------------------------------------
+Top Module: serv_rf_top
+Logic Elements (SB_LUT4): 266
+Flip-Flops (SB_DFF*): 182
+Memory Blocks (SB_RAM40_4K): 1
+
+Note: These results were obtained using Yosys 0.33 targeting Lattice iCE40 architecture.
